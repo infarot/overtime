@@ -1,4 +1,4 @@
-package com.dawid.overtime.auth;
+package com.dawid.overtime.auth.service;
 
 import com.dawid.overtime.auth.entity.ApplicationUser;
 import com.dawid.overtime.auth.repository.ApplicationUserRepository;

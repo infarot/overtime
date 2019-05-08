@@ -1,4 +1,7 @@
 package com.dawid.overtime.auth.service;
 
-public class ApplicationUserService {
+import com.dawid.overtime.auth.entity.ApplicationUser;
+
+public interface ApplicationUserService {
+    ApplicationUser findByUsername(String username);
 }

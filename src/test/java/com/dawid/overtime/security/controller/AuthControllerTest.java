@@ -1,10 +1,10 @@
 package com.dawid.overtime.security.controller;
 
-import com.dawid.overtime.security.service.ApplicationUserService;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -17,7 +17,7 @@ public class AuthControllerTest {
     private WebApplicationContext context;
 
     @Mock
-    private ApplicationUserService applicationUserService;
+    private UserDetailsService userService;
 
     private MockMvc mvc;
 

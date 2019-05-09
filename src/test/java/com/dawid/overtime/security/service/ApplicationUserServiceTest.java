@@ -7,11 +7,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationUserServiceTest {
 
-    private ApplicationUserService instance;
+    private UserDetailsService instance;
 
     @Mock
     private ApplicationUserRepository applicationUserRepository;
@@ -19,13 +20,12 @@ public class ApplicationUserServiceTest {
 
     @Before
     public void setup(){
-        instance = new ApplicationUserServiceImpl(applicationUserRepository);
+        instance = new UserDetailsServiceImpl(applicationUserRepository);
     }
 
     @Test
     public void isAbleToFindUserByUsername(){
         ApplicationUser testApplicationUser = new ApplicationUser();
-        testApplicationUser.setId(1);
         testApplicationUser.setUsername("test");
         testApplicationUser.setPassword("test");
 
@@ -33,6 +33,6 @@ public class ApplicationUserServiceTest {
 
         Mockito.when(applicationUserRepository.findByUsername(testUsername)).thenReturn(testApplicationUser);
 
-        Assert.assertEquals(instance.findByUsername("test"), testApplicationUser);
+        Assert.assertEquals(instance.loadUserByUsername("test").getUsername(), testApplicationUser.getUsername());
     }
 }

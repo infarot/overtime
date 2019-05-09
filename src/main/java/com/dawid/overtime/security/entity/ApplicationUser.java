@@ -2,26 +2,21 @@ package com.dawid.overtime.security.entity;
 
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity
 public class ApplicationUser {
+    @NotNull
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @Size(min = 4, max = 20, message = "Username must be more than 4 characters")
     private String username;
+    @NotNull
+    @Size(min = 8, max = 100, message = "Password must be more than 8 characters")
     private String password;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getUsername() {
         return username;
@@ -44,13 +39,12 @@ public class ApplicationUser {
         if (this == o) return true;
         if (!(o instanceof ApplicationUser)) return false;
         ApplicationUser that = (ApplicationUser) o;
-        return id == that.id &&
-                Objects.equals(username, that.username) &&
+        return Objects.equals(username, that.username) &&
                 Objects.equals(password, that.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password);
+        return Objects.hash(username, password);
     }
 }

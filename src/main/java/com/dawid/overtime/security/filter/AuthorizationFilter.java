@@ -17,9 +17,9 @@ import java.util.ArrayList;
 
 import static com.dawid.overtime.security.constant.SecurityConstant.*;
 
-public class AuthorisationFilter extends BasicAuthenticationFilter {
+public class AuthorizationFilter extends BasicAuthenticationFilter {
 
-    public AuthorisationFilter(AuthenticationManager authenticationManager) {
+    public AuthorizationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
     }
 
@@ -41,9 +41,9 @@ public class AuthorisationFilter extends BasicAuthenticationFilter {
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+
         String token = request.getHeader(HEADER_STRING);
         if (token != null) {
-            // parse the token.
             String user = parseToken(token);
             if (user != null) {
                 return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
@@ -54,6 +54,9 @@ public class AuthorisationFilter extends BasicAuthenticationFilter {
     }
 
     private String parseToken(String token){
+        if (token.isEmpty()){
+            return "";
+        }
         return JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
                 .build()
                 .verify(token.replace(TOKEN_PREFIX, ""))

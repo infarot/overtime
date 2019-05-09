@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service;
 import static java.util.Collections.emptyList;
 
 @Service
-public class UserDetailServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final ApplicationUserRepository applicationUserRepository;
 
     @Autowired
-    public UserDetailServiceImpl(ApplicationUserRepository applicationUserRepository) {
+    public UserDetailsServiceImpl(ApplicationUserRepository applicationUserRepository) {
         this.applicationUserRepository = applicationUserRepository;
     }
 
@@ -29,5 +29,9 @@ public class UserDetailServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException(username);
         }
         return new User(applicationUser.getUsername(), applicationUser.getPassword(), emptyList());
+    }
+
+    public void save(ApplicationUser applicationUser){
+        applicationUserRepository.save(applicationUser);
     }
 }

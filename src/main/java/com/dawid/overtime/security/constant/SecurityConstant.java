@@ -1,15 +1,37 @@
 package com.dawid.overtime.security.constant;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SecurityConstant {
 
-    @Value("${jwt.secret}")
+
     public static String SECRET;
-    @Value("${jwt.expiration_time}")
+
     public static long EXPIRATION_TIME;
-    @Value("${jwt.token_prefix}")
+
     public static String TOKEN_PREFIX;
-    @Value("${jwt.header_string}")
+
     public static String HEADER_STRING;
+
+    @Value("${jwt.secret}")
+    public void setSECRET(String SECRET) {
+        SecurityConstant.SECRET = SECRET;
+    }
+
+    @Value("${jwt.expiration_time}")
+    public void setExpirationTime(long expirationTime) {
+        EXPIRATION_TIME = expirationTime;
+    }
+
+    @Value("${jwt.token_prefix}")
+    public void setTokenPrefix(String tokenPrefix) {
+        TOKEN_PREFIX = tokenPrefix;
+    }
+
+    @Value("${jwt.header_string}")
+    public void setHeaderString(String headerString) {
+        HEADER_STRING = headerString;
+    }
 }

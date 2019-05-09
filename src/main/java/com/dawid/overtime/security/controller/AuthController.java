@@ -1,6 +1,6 @@
-package com.dawid.overtime.auth.controller;
+package com.dawid.overtime.security.controller;
 
-import com.dawid.overtime.auth.service.ApplicationUserService;
+import com.dawid.overtime.security.service.ApplicationUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;

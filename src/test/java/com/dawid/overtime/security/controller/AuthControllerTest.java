@@ -1,6 +1,6 @@
-package com.dawid.overtime.auth.controller;
+package com.dawid.overtime.security.controller;
 
-import com.dawid.overtime.auth.service.ApplicationUserService;
+import com.dawid.overtime.security.service.ApplicationUserService;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

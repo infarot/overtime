@@ -1,4 +1,4 @@
-package com.dawid.overtime.auth.entity;
+package com.dawid.overtime.security.entity;
 
 
 import javax.persistence.Entity;

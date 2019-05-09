@@ -1,18 +1,14 @@
-package com.dawid.overtime.auth.service;
+package com.dawid.overtime.security.service;
 
-import com.dawid.overtime.auth.entity.ApplicationUser;
-import com.dawid.overtime.auth.repository.ApplicationUserRepository;
-import com.dawid.overtime.auth.service.ApplicationUserService;
-import com.dawid.overtime.auth.service.ApplicationUserServiceImpl;
+import com.dawid.overtime.security.entity.ApplicationUser;
+import com.dawid.overtime.security.repository.ApplicationUserRepository;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class ApplicationUserServiceTest {
 
     private ApplicationUserService instance;

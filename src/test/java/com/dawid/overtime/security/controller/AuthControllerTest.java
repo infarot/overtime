@@ -9,11 +9,14 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -23,15 +26,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
+@AutoConfigureTestDatabase
 public class AuthControllerTest {
 
-    private static String asJsonString(final Object obj) {
+    private String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
+    private String properPassword = "test1234";
+    private String properUsername = "test";
+
 
     @Autowired
     private ApplicationUserRepository applicationUserRepository;
@@ -40,14 +48,12 @@ public class AuthControllerTest {
     private MockMvc mvc;
 
     @After
-    public void tearDown(){
+    public void tearDown() {
         applicationUserRepository.deleteAll();
     }
 
     @Test
     public void isSignUpWithProperCredentialsWorking() throws Exception {
-        String properUsername = "test";
-        String properPassword = "test1234";
         ApplicationUser user = new ApplicationUser();
         user.setUsername(properUsername);
         user.setPassword(properPassword);
@@ -62,7 +68,6 @@ public class AuthControllerTest {
     @Test
     public void isSignUpWithToShortUsernameNotWorking() throws Exception {
         String toShortUsername = "t";
-        String properPassword = "test1234";
         ApplicationUser user = new ApplicationUser();
         user.setUsername(toShortUsername);
         user.setPassword(properPassword);
@@ -77,7 +82,6 @@ public class AuthControllerTest {
     @Test
     public void isSignUpWithToLongUsernameNotWorking() throws Exception {
         String toLongUsername = "123456789123456789123";
-        String properPassword = "test1234";
         ApplicationUser user = new ApplicationUser();
         user.setUsername(toLongUsername);
         user.setPassword(properPassword);
@@ -91,7 +95,6 @@ public class AuthControllerTest {
 
     @Test
     public void isSignUpWithToLongPasswordNotWorking() throws Exception {
-        String properUsername = "test";
         String toLongPassword = "NiotXfybSOWfhj1QdMFuOKzOhBxrwWaBzKVUgQd0MONkaK4UFF6CkQat3zNxRPMtB7Dek1YRiZIlFp9MYr4hqSzhq92ASaqOFgQij";
         ApplicationUser user = new ApplicationUser();
         user.setUsername(properUsername);
@@ -106,7 +109,6 @@ public class AuthControllerTest {
 
     @Test
     public void isSignUpWithToShortPasswordNotWorking() throws Exception {
-        String properUsername = "test";
         String toShortPassword = "t";
         ApplicationUser user = new ApplicationUser();
         user.setUsername(properUsername);
@@ -121,11 +123,9 @@ public class AuthControllerTest {
 
     @Test
     public void isSignUpWithNotAvailableUsernameNotWorking() throws Exception {
-        String properUsername = "test";
-        String toShortPassword = "test1234";
         ApplicationUser user = new ApplicationUser();
         user.setUsername(properUsername);
-        user.setPassword(toShortPassword);
+        user.setPassword(properPassword);
 
         mvc.perform(post("/sign-up")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -140,15 +140,74 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.message", Matchers.is("Username is already taken!")));
     }
 
+    @Test
+    public void isLoginWithProperCredentialsWorking() throws Exception {
+        ApplicationUser user = new ApplicationUser();
+        user.setUsername(properUsername);
+        user.setPassword(properPassword);
 
+        mvc.perform(post("/sign-up")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(user))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
 
+        mvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(user))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 
     @Test
-    public void isForbiddenWhenNotAuthenticated() throws Exception {
+    public void isLoginWithIncorrectCredentialsNotWorking() throws Exception {
+        String properUsername = "test";
+        String toShortPassword = "test1234";
+        ApplicationUser user = new ApplicationUser();
+        user.setUsername(properUsername);
+        user.setPassword(toShortPassword);
+
+        mvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(user))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void isForbiddenToSeeActuatorWhenNotAuthenticated() throws Exception {
 
         mvc.perform(get("/actuator")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void isPermittedToSeeActuatorWhenAuthenticated() throws Exception {
+
+        ApplicationUser user = new ApplicationUser();
+        user.setUsername(properUsername);
+        user.setPassword(properPassword);
+
+        mvc.perform(post("/sign-up")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(user))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        MvcResult result = mvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(user))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String token = result.getResponse().getHeaderValue("Authorization").toString();
+
+        mvc.perform(get("/actuator")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
 }

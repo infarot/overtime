@@ -34,4 +34,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public void save(ApplicationUser applicationUser){
         applicationUserRepository.save(applicationUser);
     }
+
+    public boolean userExist(String username){
+        return applicationUserRepository.findByUsername(username) != null;
+    }
 }

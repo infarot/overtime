@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class SecurityConstant {
 
-
     public static String SECRET;
 
     public static long EXPIRATION_TIME;

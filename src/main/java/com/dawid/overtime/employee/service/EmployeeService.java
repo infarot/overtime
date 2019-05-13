@@ -5,5 +5,5 @@ import com.dawid.overtime.security.entity.ApplicationUser;
 
 public interface EmployeeService {
 
-    void addNewEmployee(String name, String lastName, ApplicationUser applicationUser);
+    void addNewEmployee(String name, String lastName, String applicationUserUsername);
 }

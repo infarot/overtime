@@ -8,5 +8,5 @@ import java.util.List;
 public interface EmployeeService {
 
     void addNewEmployee(String name, String lastName, String applicationUserUsername);
-    List<Employee> findAllEmployeesByApplicationUsername(String username);
+    List<Employee> findAllEmployeesByApplicationUserUsername(String username);
 }

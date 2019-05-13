@@ -20,7 +20,7 @@ public class EmployeeController {
 
     @GetMapping("/employee")
     public List<Employee> getAllEmployeesForApplicationUser() {
-        return employeeService.findAllEmployeesByApplicationUsername(loadCurrentUserUsername());
+        return employeeService.findAllEmployeesByApplicationUserUsername(loadCurrentUserUsername());
     }
 
     @PostMapping("/employee")

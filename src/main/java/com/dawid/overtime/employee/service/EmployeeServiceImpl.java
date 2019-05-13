@@ -38,7 +38,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> findAllEmployeesByApplicationUsername(String username) {
+    public List<Employee> findAllEmployeesByApplicationUserUsername(String username) {
         return employeeRepository.findAllByApplicationUser(applicationUserWrapper.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username)));
     }

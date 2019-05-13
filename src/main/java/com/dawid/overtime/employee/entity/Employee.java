@@ -25,7 +25,6 @@ public class Employee {
     @Length(max = 50)
     private String lastName;
     @ManyToOne
-    @NotNull
     private ApplicationUser applicationUser;
 
     public void setApplicationUser(ApplicationUser applicationUser) {
@@ -46,6 +45,10 @@ public class Employee {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override

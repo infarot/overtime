@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.management.InvalidAttributeValueException;
 import javax.validation.Valid;
+import java.util.List;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -18,7 +19,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private ApplicationUserWrapper applicationUserWrapper;
 
     @Autowired
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, ApplicationUserWrapper applicationUserWrapper){
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, ApplicationUserWrapper applicationUserWrapper) {
         this.employeeRepository = employeeRepository;
         this.applicationUserWrapper = applicationUserWrapper;
     }
@@ -31,8 +32,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setName(name);
         employee.setLastName(lastName);
         employee.setApplicationUser(applicationUserWrapper.findByUsername(applicationUserUsername)
-                .orElseThrow(()-> new UsernameNotFoundException(applicationUserUsername)));
+                .orElseThrow(() -> new UsernameNotFoundException(applicationUserUsername)));
 
         employeeRepository.save(employee);
+    }
+
+    @Override
+    public List<Employee> findAllEmployeesByApplicationUsername(String username) {
+        return employeeRepository.findAllByApplicationUser(applicationUserWrapper.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username)));
     }
 }

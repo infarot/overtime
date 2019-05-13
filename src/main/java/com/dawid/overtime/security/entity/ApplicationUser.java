@@ -1,10 +1,15 @@
 package com.dawid.overtime.security.entity;
 
 
+import com.dawid.overtime.employee.entity.Employee;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -16,6 +21,8 @@ public class ApplicationUser {
     @NotNull
     @Size(min = 8, max = 100, message = "Password must be more than 8 characters")
     private String password;
+    @OneToMany(mappedBy = "applicationUser", fetch = FetchType.LAZY)
+    private List<Employee> employees;
 
 
     public String getUsername() {

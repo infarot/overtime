@@ -24,18 +24,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        ApplicationUser applicationUser = applicationUserRepository.findByUsername(username);
-        if (applicationUser == null) {
-            throw new UsernameNotFoundException(username);
-        }
+        ApplicationUser applicationUser = applicationUserRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
         return new User(applicationUser.getUsername(), applicationUser.getPassword(), emptyList());
     }
 
-    public void save(ApplicationUser applicationUser){
+    public void save(ApplicationUser applicationUser) {
         applicationUserRepository.save(applicationUser);
     }
 
-    public boolean userExist(String username){
-        return applicationUserRepository.findByUsername(username) != null;
+    public boolean userExist(String username) {
+        return applicationUserRepository.findByUsername(username).isPresent();
     }
 }

@@ -9,6 +9,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.Optional;
+
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationUserServiceTest {
 
@@ -31,7 +33,7 @@ public class ApplicationUserServiceTest {
 
         String testUsername = "test";
 
-        Mockito.when(applicationUserRepository.findByUsername(testUsername)).thenReturn(testApplicationUser);
+        Mockito.when(applicationUserRepository.findByUsername(testUsername)).thenReturn(Optional.of(testApplicationUser));
 
         Assert.assertEquals(instance.loadUserByUsername("test").getUsername(), testApplicationUser.getUsername());
     }

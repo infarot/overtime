@@ -5,6 +5,7 @@ import com.dawid.overtime.utility.MyAssertion;
 import com.dawid.overtime.security.entity.ApplicationUser;
 import com.dawid.overtime.security.repository.ApplicationUserRepository;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,15 @@ public class EmployeeRepositoryTest {
     @Autowired
     private ApplicationUserRepository applicationUserRepository;
 
+    private ApplicationUser applicationUser;
+
+    @Before
+    public void setup(){
+        applicationUser = new ApplicationUser();
+        applicationUser.setUsername("test");
+        applicationUser.setPassword("test1234");
+    }
+
 
     @Test
     public void isAbleToSaveEmployeeWithCorrectCredentials() {
@@ -30,9 +40,6 @@ public class EmployeeRepositoryTest {
         Employee employee = new Employee();
         employee.setName("name");
         employee.setLastName("lastName");
-        ApplicationUser applicationUser = new ApplicationUser();
-        applicationUser.setUsername("test");
-        applicationUser.setPassword("test1234");
         employee.setApplicationUser(applicationUser);
 
         applicationUserRepository.save(applicationUser);
@@ -47,9 +54,6 @@ public class EmployeeRepositoryTest {
         Employee employee = new Employee();
         employee.setName("name1");
         employee.setLastName("lastName");
-        ApplicationUser applicationUser = new ApplicationUser();
-        applicationUser.setUsername("test");
-        applicationUser.setPassword("test1234");
         employee.setApplicationUser(applicationUser);
 
         applicationUserRepository.save(applicationUser);
@@ -83,14 +87,17 @@ public class EmployeeRepositoryTest {
         Employee employee = new Employee();
         employee.setName("name");
         employee.setLastName("lastName");
-        ApplicationUser applicationUser = new ApplicationUser();
-        applicationUser.setUsername("test");
-        applicationUser.setPassword("test1234");
+
         employee.setApplicationUser(applicationUser);
 
         applicationUserRepository.save(applicationUser);
         employeeRepository.save(employee);
 
         Assert.assertEquals(employeeRepository.findAllByApplicationUser(applicationUser), Collections.singletonList(employee));
+    }
+
+    @Test
+    public void isReturningEmptyListWhenNoEmployeesFound(){
+        Assert.assertEquals(employeeRepository.findAllByApplicationUser(applicationUser), Collections.emptyList());
     }
 }

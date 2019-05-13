@@ -26,7 +26,7 @@ public class ApplicationUserRepositoryTest {
 
         ApplicationUser testUser = new ApplicationUser();
         testUser.setUsername("test");
-        testUser.setPassword("test");
+        testUser.setPassword("test1234");
 
         applicationUserRepository.save(testUser);
 
@@ -38,7 +38,7 @@ public class ApplicationUserRepositoryTest {
 
         ApplicationUser testUser = new ApplicationUser();
         testUser.setUsername("test");
-        testUser.setPassword("test");
+        testUser.setPassword("test1234");
 
         applicationUserRepository.save(testUser);
 

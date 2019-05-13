@@ -2,19 +2,25 @@ package com.dawid.overtime.employee.controller;
 
 import com.dawid.overtime.employee.entity.Employee;
 import com.dawid.overtime.security.entity.ApplicationUser;
+import com.dawid.overtime.security.repository.ApplicationUserRepository;
 import com.dawid.overtime.utility.JsonParser;
 import org.hamcrest.Matchers;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
+import javax.transaction.Transactional;
 
 import static com.dawid.overtime.utility.JsonParser.asJsonString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,7 +32,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
+@Transactional
 public class EmployeeControllerTest {
+
 
     @Autowired
     private MockMvc mvc;
@@ -59,6 +67,7 @@ public class EmployeeControllerTest {
 
         token = result.getResponse().getHeaderValue("Authorization").toString();
     }
+
 
     @Test
     public void isAbleToAddNewEmployee() throws Exception {

@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface EmployeeService {
 
-    void addNewEmployee(String name, String lastName, String applicationUserUsername);
+    Long addNewEmployee(String name, String lastName, String applicationUserUsername);
     List<Employee> findAllEmployeesByApplicationUserUsername(String username);
+    void delete(String id, String ownerUsername);
 }

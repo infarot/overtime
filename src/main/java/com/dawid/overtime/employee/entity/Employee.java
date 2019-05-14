@@ -1,6 +1,7 @@
 package com.dawid.overtime.employee.entity;
 
 import com.dawid.overtime.security.entity.ApplicationUser;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -27,6 +28,11 @@ public class Employee {
     @ManyToOne
     private ApplicationUser applicationUser;
 
+    @JsonIgnore
+    public String getApplicationUserUsername() {
+        return applicationUser.getUsername();
+    }
+
     public void setApplicationUser(ApplicationUser applicationUser) {
         this.applicationUser = applicationUser;
     }
@@ -49,6 +55,10 @@ public class Employee {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.dawid.overtime.security.controller;
 
 import com.dawid.overtime.security.entity.ApplicationUser;
-import com.dawid.overtime.security.repository.ApplicationUserRepository;
 
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -32,10 +31,6 @@ public class AuthControllerTest {
 
     private String properPassword = "test1234";
     private String properUsername = "test";
-
-
-    @Autowired
-    private ApplicationUserRepository applicationUserRepository;
 
     @Autowired
     private MockMvc mvc;

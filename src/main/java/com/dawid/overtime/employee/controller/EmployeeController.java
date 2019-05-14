@@ -24,8 +24,14 @@ public class EmployeeController {
     }
 
     @PostMapping("/employee")
-    public void addNewEmployee(@Valid @RequestBody Employee employee) {
-        employeeService.addNewEmployee(employee.getName(), employee.getLastName(), loadCurrentUserUsername());
+    public Long addNewEmployee(@Valid @RequestBody Employee employee) {
+       return employeeService.addNewEmployee(employee.getName(), employee.getLastName(), loadCurrentUserUsername());
+    }
+
+    @DeleteMapping("/employee/{id}")
+    public void deleteEmployee(@PathVariable String id){
+        String currentUser = loadCurrentUserUsername();
+        employeeService.delete(id, currentUser);
     }
 
     private String loadCurrentUserUsername() {

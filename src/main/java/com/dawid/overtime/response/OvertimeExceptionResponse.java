@@ -1,12 +1,12 @@
-package com.dawid.overtime.security.response;
+package com.dawid.overtime.response;
 
 
-public class SecurityExceptionResponse {
+public class OvertimeExceptionResponse {
     private int status;
     private String message;
     private long timeStamp;
 
-    public SecurityExceptionResponse(int status, String message, long timeStamp) {
+    public OvertimeExceptionResponse(int status, String message, long timeStamp) {
         this.status = status;
         this.message = message;
         this.timeStamp = timeStamp;

@@ -19,8 +19,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import javax.transaction.Transactional;
 
 import static com.dawid.overtime.utility.JsonParser.asJsonString;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -31,19 +30,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class EmployeeControllerTest {
 
-
     @Autowired
     private MockMvc mvc;
 
     private String token;
 
-    private ApplicationUser user;
-
     private Employee employee;
 
     @Before
     public void setup() throws Exception {
-        user = new ApplicationUser();
+        ApplicationUser user = new ApplicationUser();
         user.setUsername("test");
         user.setPassword("test1234");
 
@@ -89,4 +85,32 @@ public class EmployeeControllerTest {
                 .andExpect(jsonPath("$.[0].name", Matchers.is("test")))
                 .andExpect(jsonPath("$.[0].lastName", Matchers.is("test")));
     }
+
+    @Test
+    public void isAbleToDeleteExistingEmployee() throws Exception {
+
+        MvcResult result = mvc.perform(post("/employee")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(employee)))
+                .andExpect(status().isOk()).andReturn();
+        long id = Long.parseLong(result.getResponse().getContentAsString());
+
+        mvc.perform(delete("/employee/" + id)
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    public void isUnableToDeleteNotExistingEmployee() throws Exception {
+
+        mvc.perform(delete("/employee/1")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+    }
+
+
 }

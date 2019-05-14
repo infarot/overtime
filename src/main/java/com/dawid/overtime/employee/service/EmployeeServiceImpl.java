@@ -1,6 +1,8 @@
 package com.dawid.overtime.employee.service;
 
 import com.dawid.overtime.employee.entity.Employee;
+import com.dawid.overtime.employee.exception.EmployeeIdNotFoundException;
+import com.dawid.overtime.employee.exception.UnathorizedDeleteAttemptException;
 import com.dawid.overtime.employee.repository.EmployeeRepository;
 import com.dawid.overtime.employee.wrapper.ApplicationUserWrapper;
 import com.dawid.overtime.security.entity.ApplicationUser;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.management.InvalidAttributeValueException;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -26,20 +29,32 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
     @Override
-    public void addNewEmployee(String name, String lastName, String applicationUserUsername) {
+    public Long addNewEmployee(String name, String lastName, String applicationUserUsername) {
 
         Employee employee = new Employee();
         employee.setName(name);
         employee.setLastName(lastName);
         employee.setApplicationUser(applicationUserWrapper.findByUsername(applicationUserUsername)
                 .orElseThrow(() -> new UsernameNotFoundException(applicationUserUsername)));
-
-        employeeRepository.save(employee);
+        return employeeRepository.save(employee).getId();
     }
 
     @Override
     public List<Employee> findAllEmployeesByApplicationUserUsername(String username) {
         return employeeRepository.findAllByApplicationUser(applicationUserWrapper.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username)));
+    }
+
+    @Override
+    public void delete(String id, String ownerUsername) {
+        Long parsedId = Long.parseLong(id);
+        Optional<Employee> optionalEmployee = employeeRepository.findById(parsedId);
+        Employee employee = optionalEmployee.orElseThrow(() -> new EmployeeIdNotFoundException(id));
+        if (employee.getApplicationUserUsername().equals(ownerUsername)){
+            employeeRepository.delete(employee);
+        }else {
+            throw new UnathorizedDeleteAttemptException
+                    ("Provided employee id doesn't belong to user with username " + ownerUsername);
+        }
     }
 }

@@ -13,7 +13,7 @@ public class ApplicationUserWrapperImpl implements ApplicationUserWrapper {
     private ApplicationUserRepository applicationUserRepository;
 
     @Autowired
-    public ApplicationUserWrapperImpl(ApplicationUserRepository applicationUserRepository){
+    public ApplicationUserWrapperImpl(ApplicationUserRepository applicationUserRepository) {
         this.applicationUserRepository = applicationUserRepository;
     }
 
@@ -21,4 +21,5 @@ public class ApplicationUserWrapperImpl implements ApplicationUserWrapper {
     public Optional<ApplicationUser> findByUsername(String username) {
         return applicationUserRepository.findByUsername(username);
     }
+
 }

@@ -1,7 +1,5 @@
-package com.dawid.overtime.security.entity;
+package com.dawid.overtime.entity;
 
-
-import com.dawid.overtime.employee.entity.Employee;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;

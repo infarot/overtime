@@ -1,6 +1,6 @@
 package com.dawid.overtime.employee.controller;
 
-import com.dawid.overtime.employee.entity.Employee;
+import com.dawid.overtime.entity.Employee;
 import com.dawid.overtime.employee.service.EmployeeService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;

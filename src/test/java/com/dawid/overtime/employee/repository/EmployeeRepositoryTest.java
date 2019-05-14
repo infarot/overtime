@@ -1,8 +1,8 @@
 package com.dawid.overtime.employee.repository;
 
-import com.dawid.overtime.employee.entity.Employee;
+import com.dawid.overtime.entity.Employee;
 import com.dawid.overtime.utility.MyAssertion;
-import com.dawid.overtime.security.entity.ApplicationUser;
+import com.dawid.overtime.entity.ApplicationUser;
 import com.dawid.overtime.security.repository.ApplicationUserRepository;
 import org.junit.Assert;
 import org.junit.Before;

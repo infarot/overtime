@@ -1,6 +1,6 @@
 package com.dawid.overtime.security.controller;
 
-import com.dawid.overtime.security.entity.ApplicationUser;
+import com.dawid.overtime.entity.ApplicationUser;
 
 import org.hamcrest.Matchers;
 import org.junit.Test;

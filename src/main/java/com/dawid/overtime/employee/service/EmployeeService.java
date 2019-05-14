@@ -1,7 +1,6 @@
 package com.dawid.overtime.employee.service;
 
-import com.dawid.overtime.employee.entity.Employee;
-import com.dawid.overtime.security.entity.ApplicationUser;
+import com.dawid.overtime.entity.Employee;
 
 import java.util.List;
 

@@ -1,9 +1,9 @@
 package com.dawid.overtime.employee.service;
 
-import com.dawid.overtime.employee.entity.Employee;
+import com.dawid.overtime.entity.Employee;
 import com.dawid.overtime.employee.repository.EmployeeRepository;
 import com.dawid.overtime.employee.wrapper.ApplicationUserWrapper;
-import com.dawid.overtime.security.entity.ApplicationUser;
+import com.dawid.overtime.entity.ApplicationUser;
 import com.dawid.overtime.utility.MyAssertion;
 import org.junit.Before;
 import org.junit.Test;

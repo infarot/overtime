@@ -1,6 +1,6 @@
 package com.dawid.overtime.security.service;
 
-import com.dawid.overtime.security.entity.ApplicationUser;
+import com.dawid.overtime.entity.ApplicationUser;
 import com.dawid.overtime.security.repository.ApplicationUserRepository;
 import org.junit.*;
 import org.junit.runner.RunWith;

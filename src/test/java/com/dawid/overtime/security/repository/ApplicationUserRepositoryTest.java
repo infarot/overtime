@@ -1,6 +1,6 @@
 package com.dawid.overtime.security.repository;
 
-import com.dawid.overtime.security.entity.ApplicationUser;
+import com.dawid.overtime.entity.ApplicationUser;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;

@@ -1,6 +1,6 @@
 package com.dawid.overtime.employee.wrapper;
 
-import com.dawid.overtime.security.entity.ApplicationUser;
+import com.dawid.overtime.entity.ApplicationUser;
 import com.dawid.overtime.security.repository.ApplicationUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

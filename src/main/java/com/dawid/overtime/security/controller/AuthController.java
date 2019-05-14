@@ -1,6 +1,6 @@
 package com.dawid.overtime.security.controller;
 
-import com.dawid.overtime.security.entity.ApplicationUser;
+import com.dawid.overtime.entity.ApplicationUser;
 import com.dawid.overtime.security.exception.UsernameAlreadyTakenException;
 import com.dawid.overtime.security.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;

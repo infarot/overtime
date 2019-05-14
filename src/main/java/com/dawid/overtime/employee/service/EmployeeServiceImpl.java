@@ -1,17 +1,14 @@
 package com.dawid.overtime.employee.service;
 
-import com.dawid.overtime.employee.entity.Employee;
+import com.dawid.overtime.entity.Employee;
 import com.dawid.overtime.employee.exception.EmployeeIdNotFoundException;
 import com.dawid.overtime.employee.exception.UnathorizedDeleteAttemptException;
 import com.dawid.overtime.employee.repository.EmployeeRepository;
 import com.dawid.overtime.employee.wrapper.ApplicationUserWrapper;
-import com.dawid.overtime.security.entity.ApplicationUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.management.InvalidAttributeValueException;
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +46,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void delete(String id, String ownerUsername) {
         Long parsedId = Long.parseLong(id);
         Optional<Employee> optionalEmployee = employeeRepository.findById(parsedId);
-        Employee employee = optionalEmployee.orElseThrow(() -> new EmployeeIdNotFoundException(id));
+        Employee employee = optionalEmployee.orElseThrow(() -> new EmployeeIdNotFoundException
+                ("Employee with id " + id + " was not found"));
         if (employee.getApplicationUserUsername().equals(ownerUsername)){
             employeeRepository.delete(employee);
         }else {

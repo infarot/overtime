@@ -4,7 +4,6 @@ import com.dawid.overtime.security.entity.ApplicationUser;
 import com.dawid.overtime.security.repository.ApplicationUserRepository;
 
 import org.hamcrest.Matchers;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +40,6 @@ public class AuthControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    @After
-    public void tearDown() {
-        applicationUserRepository.deleteAll();
-    }
 
     @Test
     public void isSignUpWithProperCredentialsWorking() throws Exception {

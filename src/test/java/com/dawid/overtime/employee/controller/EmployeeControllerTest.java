@@ -2,17 +2,13 @@ package com.dawid.overtime.employee.controller;
 
 import com.dawid.overtime.employee.entity.Employee;
 import com.dawid.overtime.security.entity.ApplicationUser;
-import com.dawid.overtime.security.repository.ApplicationUserRepository;
-import com.dawid.overtime.utility.JsonParser;
+
 import org.hamcrest.Matchers;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;

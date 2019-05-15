@@ -5,26 +5,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 public class Overtime {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+
     private Duration amount;
+    @Id
     private LocalDate overtimeDate;
     private LocalDate pickUpDate;
     private String remarks;
     @ManyToOne
     private CustomHourStatistic customHourStatistic;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Duration getAmount() {
         return amount;
@@ -39,7 +31,7 @@ public class Overtime {
     }
 
     public void setOvertimeDate(LocalDate overtimeDate) {
-        this.overtimeDate = overtimeDate;
+        this.overtimeDate = overtimeDate.plusDays(1);
     }
 
     public LocalDate getPickUpDate() {
@@ -47,7 +39,7 @@ public class Overtime {
     }
 
     public void setPickUpDate(LocalDate pickUpDate) {
-        this.pickUpDate = pickUpDate;
+        this.pickUpDate = pickUpDate.plusDays(1);
     }
 
     public String getRemarks() {
@@ -65,5 +57,18 @@ public class Overtime {
 
     public void setCustomHourStatistic(CustomHourStatistic customHourStatistic) {
         this.customHourStatistic = customHourStatistic;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Overtime)) return false;
+        Overtime overtime = (Overtime) o;
+        return overtimeDate.equals(overtime.overtimeDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(overtimeDate);
     }
 }

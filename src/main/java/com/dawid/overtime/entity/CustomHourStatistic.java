@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.time.Duration;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class CustomHourStatistic {
@@ -16,12 +17,20 @@ public class CustomHourStatistic {
     @OneToOne
     private Employee employee;
     @OneToMany(mappedBy = "customHourStatistic", cascade = CascadeType.ALL)
-    private List<Overtime> overtime;
+    private Set<Overtime> overtime;
     @OneToMany(mappedBy = "customHourStatistic", cascade = CascadeType.ALL)
-    private List<Shortage> shortage;
+    private Set<Shortage> shortage;
 
     public Long getId() {
         return id;
+    }
+
+    public Duration getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Duration balance) {
+        this.balance = balance;
     }
 
     @JsonIgnore
@@ -33,19 +42,19 @@ public class CustomHourStatistic {
         this.employee = employee;
     }
 
-    public List<Overtime> getOvertime() {
+    public Set<Overtime> getOvertime() {
         return overtime;
     }
 
-    public void setOvertime(List<Overtime> overtime) {
+    public void setOvertime(Set<Overtime> overtime) {
         this.overtime = overtime;
     }
 
-    public List<Shortage> getShortage() {
+    public Set<Shortage> getShortage() {
         return shortage;
     }
 
-    public void setShortage(List<Shortage> shortage) {
+    public void setShortage(Set<Shortage> shortage) {
         this.shortage = shortage;
     }
 }

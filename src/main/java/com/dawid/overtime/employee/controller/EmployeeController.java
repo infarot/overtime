@@ -2,12 +2,10 @@ package com.dawid.overtime.employee.controller;
 
 import com.dawid.overtime.entity.Employee;
 import com.dawid.overtime.employee.service.EmployeeService;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import com.dawid.overtime.entity.Overtime;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.Duration;
 import java.util.List;
 
 @RestController
@@ -21,35 +19,23 @@ public class EmployeeController {
 
     @GetMapping("/employee")
     public List<Employee> getAllEmployeesForApplicationUser() {
-        return employeeService.findAllEmployeesByApplicationUserUsername(loadCurrentUserUsername());
+        return employeeService.findAllEmployeesByApplicationUserUsername();
     }
 
     @PostMapping("/employee")
     public Long addNewEmployee(@Valid @RequestBody Employee employee) {
-       return employeeService.addNewEmployee(employee.getName(), employee.getLastName(), loadCurrentUserUsername());
+        return employeeService.addNewEmployee(employee.getName(), employee.getLastName());
     }
 
     @DeleteMapping("/employee/{id}")
-    public void deleteEmployee(@PathVariable String id){
-        String currentUser = loadCurrentUserUsername();
-        employeeService.delete(id, currentUser);
+    public void deleteEmployee(@PathVariable String id) {
+        employeeService.delete(id);
     }
 
-    @PostMapping("/employee/{id}/{hours}/{minutes}")
-    public void addOvertimeToEmployee(@PathVariable String id, @PathVariable String hours, @PathVariable String minutes){
-        Duration dHours = Duration.ofHours(Long.parseLong(hours));
-        dHours = dHours.plusMinutes(Long.parseLong(minutes));
-
+    @PostMapping("/employee/{employeeId}")
+    public void addOvertimeToEmployee(@PathVariable String employeeId, @RequestBody Overtime overtime) {
+        employeeService.addOvertime(Long.parseLong(employeeId), overtime);
     }
 
-    private String loadCurrentUserUsername() {
-        String username;
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails) principal).getUsername();
-        } else {
-            username = principal.toString();
-        }
-        return username;
-    }
+
 }

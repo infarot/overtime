@@ -9,23 +9,13 @@ import java.time.LocalDate;
 @Entity
 public class Shortage {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private Duration amount;
+    @Id
     private LocalDate shortageDate;
     private LocalDate catchUpDate;
     private String remarks;
     @ManyToOne
     private CustomHourStatistic customHourStatistic;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Duration getAmount() {
         return amount;
@@ -40,7 +30,7 @@ public class Shortage {
     }
 
     public void setShortageDate(LocalDate shortageDate) {
-        this.shortageDate = shortageDate;
+        this.shortageDate = shortageDate.plusDays(1);
     }
 
     public LocalDate getCatchUpDate() {
@@ -48,7 +38,7 @@ public class Shortage {
     }
 
     public void setCatchUpDate(LocalDate catchUpDate) {
-        this.catchUpDate = catchUpDate;
+        this.catchUpDate = catchUpDate.plusDays(1);
     }
 
     public String getRemarks() {

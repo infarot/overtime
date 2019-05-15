@@ -3,6 +3,7 @@ package com.dawid.overtime.employee.controller;
 import com.dawid.overtime.entity.Employee;
 import com.dawid.overtime.entity.ApplicationUser;
 
+import com.dawid.overtime.entity.Overtime;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import javax.transaction.Transactional;
 
 import java.time.Duration;
+import java.time.LocalDate;
 
 import static com.dawid.overtime.utility.JsonParser.asJsonString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -124,10 +126,14 @@ public class EmployeeControllerTest {
                 .andExpect(status().isOk()).andReturn();
         long id = Long.parseLong(result.getResponse().getContentAsString());
 
+        Overtime overtime = new Overtime();
+        overtime.setAmount(Duration.ofHours(2).plusMinutes(35));
+        overtime.setOvertimeDate(LocalDate.of(2019,5,15));
 
-        mvc.perform(post("/employee/" + id + "/2/35")
+        mvc.perform(post("/employee/" + id)
                 .header("Authorization", token)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(overtime)))
                 .andExpect(status().isOk());
     }
 

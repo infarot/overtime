@@ -22,4 +22,10 @@ public class EmployeeExceptionHandler {
         OvertimeExceptionResponse response = new OvertimeExceptionResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage(), System.currentTimeMillis());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<OvertimeExceptionResponse> handleException(NumberFormatException e){
+        OvertimeExceptionResponse response = new OvertimeExceptionResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage(), System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -1,5 +1,6 @@
 package com.dawid.overtime.employee.service;
 
+import com.dawid.overtime.employee.wrapper.AuthorizationHolder;
 import com.dawid.overtime.entity.Employee;
 import com.dawid.overtime.employee.repository.EmployeeRepository;
 import com.dawid.overtime.employee.wrapper.ApplicationUserWrapper;
@@ -23,25 +24,24 @@ public class EmployeeServiceTest {
     @Mock
     private EmployeeRepository employeeRepository;
 
+    @Mock
+    private AuthorizationHolder authorizationHolder;
+
     private EmployeeService instance;
 
     @Before
     public void setup() {
-        instance = new EmployeeServiceImpl(employeeRepository, applicationUserWrapper);
+        instance = new EmployeeServiceImpl(employeeRepository, applicationUserWrapper, authorizationHolder);
     }
 
     @Test
     public void addNewEmployeeIsThrowingExceptionWhenApplicationUserNotFound() {
-        Mockito.when(applicationUserWrapper.findByUsername("test")).thenReturn(Optional.empty());
-
-        MyAssertion.assertDoesThrow(() -> instance.addNewEmployee("test", "test", "test"));
+        MyAssertion.assertDoesThrow(() -> instance.addNewEmployee("test", "test"));
     }
 
     @Test
     public void findEmployeeByUsernameDoesThrowExceptionWhenApplicationUserNotFound() {
-        Mockito.when(applicationUserWrapper.findByUsername("test")).thenReturn(Optional.empty());
-
-        MyAssertion.assertDoesThrow(() -> instance.findAllEmployeesByApplicationUserUsername("test"));
+        MyAssertion.assertDoesThrow(() -> instance.findAllEmployeesByApplicationUserUsername());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class EmployeeServiceTest {
 
         Mockito.when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
 
-        MyAssertion.assertDoesThrow(() -> instance.delete("1", "test"));
+        MyAssertion.assertDoesThrow(() -> instance.delete("1"));
     }
 
     @Test
@@ -74,8 +74,9 @@ public class EmployeeServiceTest {
         employee.setApplicationUser(applicationUser);
 
         Mockito.when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
+        Mockito.when(authorizationHolder.loadCurrentUserUsername()).thenReturn("testUser");
 
-        MyAssertion.assertDoesNotThrow(() -> instance.delete("1", "testUser"));
+        MyAssertion.assertDoesNotThrow(() -> instance.delete("1"));
     }
 
 }

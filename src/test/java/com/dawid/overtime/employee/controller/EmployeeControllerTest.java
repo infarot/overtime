@@ -18,6 +18,8 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import javax.transaction.Transactional;
 
+import java.time.Duration;
+
 import static com.dawid.overtime.utility.JsonParser.asJsonString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -110,6 +112,46 @@ public class EmployeeControllerTest {
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void isAbleToAddOvertimeToEmployee() throws Exception {
+
+        MvcResult result = mvc.perform(post("/employee")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(employee)))
+                .andExpect(status().isOk()).andReturn();
+        long id = Long.parseLong(result.getResponse().getContentAsString());
+
+
+        mvc.perform(post("/employee/" + id + "/2/35")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void isAbleToGetOvertimeOfEmployee() throws Exception {
+
+        MvcResult result = mvc.perform(post("/employee")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(employee)))
+                .andExpect(status().isOk()).andReturn();
+        long id = Long.parseLong(result.getResponse().getContentAsString());
+
+
+        mvc.perform(post("/employee/" + id + "/2/35")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        mvc.perform(get("/employee")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].stats.overtime", Matchers.is(Duration.ofHours(2).plusMinutes(35).toString())));
     }
 
 

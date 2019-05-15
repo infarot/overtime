@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.Duration;
 import java.util.List;
 
 @RestController
@@ -32,6 +33,13 @@ public class EmployeeController {
     public void deleteEmployee(@PathVariable String id){
         String currentUser = loadCurrentUserUsername();
         employeeService.delete(id, currentUser);
+    }
+
+    @PostMapping("/employee/{id}/{hours}/{minutes}")
+    public void addOvertimeToEmployee(@PathVariable String id, @PathVariable String hours, @PathVariable String minutes){
+        Duration dHours = Duration.ofHours(Long.parseLong(hours));
+        dHours = dHours.plusMinutes(Long.parseLong(minutes));
+
     }
 
     private String loadCurrentUserUsername() {

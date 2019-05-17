@@ -13,13 +13,12 @@ public class CustomHourStatistic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Transient
     private Duration balance;
     @OneToOne
     private Employee employee;
     @OneToMany(mappedBy = "customHourStatistic", cascade = CascadeType.ALL)
     private Set<Overtime> overtime;
-    @OneToMany(mappedBy = "customHourStatistic", cascade = CascadeType.ALL)
-    private Set<Shortage> shortage;
 
     public Long getId() {
         return id;
@@ -50,27 +49,11 @@ public class CustomHourStatistic {
         this.overtime = overtime;
     }
 
-    public Set<Shortage> getShortage() {
-        return shortage;
-    }
-
-    public void setShortage(Set<Shortage> shortage) {
-        this.shortage = shortage;
-    }
-
     public Set<Overtime> initializeOvertime() {
         Set<Overtime> overtimeSet = this.getOvertime();
         if (overtimeSet == null) {
             this.overtime = new HashSet<>();
         }
         return getOvertime();
-    }
-
-    public Set<Shortage> initializeShortage() {
-        Set<Shortage> shortageSet = this.getShortage();
-        if (shortageSet == null) {
-            this.shortage = new HashSet<>();
-        }
-        return getShortage();
     }
 }

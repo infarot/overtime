@@ -3,7 +3,6 @@ package com.dawid.overtime.employee.controller;
 import com.dawid.overtime.entity.Employee;
 import com.dawid.overtime.employee.service.EmployeeService;
 import com.dawid.overtime.entity.Overtime;
-import com.dawid.overtime.entity.Shortage;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -37,10 +36,4 @@ public class EmployeeController {
     public void addOvertimeToEmployee(@PathVariable String employeeId, @RequestBody Overtime overtime) {
         employeeService.addOvertime(Long.parseLong(employeeId), overtime);
     }
-    @PostMapping("/employee/shortage/{employeeId}")
-    public void addShortageToEmployee(@PathVariable String employeeId, @RequestBody Shortage shortage) {
-        employeeService.addShortage(Long.parseLong(employeeId), shortage);
-    }
-
-
 }

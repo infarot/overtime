@@ -4,7 +4,6 @@ import com.dawid.overtime.entity.Employee;
 import com.dawid.overtime.entity.ApplicationUser;
 
 import com.dawid.overtime.entity.Overtime;
-import com.dawid.overtime.entity.Shortage;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -166,8 +165,9 @@ public class EmployeeControllerTest {
                         Matchers.is(Duration.ofHours(2).plusMinutes(35).toString())));
     }
 
+
     @Test
-    public void isAbleToAddShortageToEmployee() throws Exception {
+    public void isAbleToGetCurrentHourBalanceOfEmployee() throws Exception {
 
         MvcResult result = mvc.perform(post("/employee")
                 .header("Authorization", token)
@@ -176,42 +176,24 @@ public class EmployeeControllerTest {
                 .andExpect(status().isOk()).andReturn();
         long id = Long.parseLong(result.getResponse().getContentAsString());
 
-        Shortage shortage = new Shortage();
-        shortage.setAmount(Duration.ofHours(2).plusMinutes(35));
-        shortage.setShortageDate(LocalDate.of(2019,5,15));
+        Overtime overtime = new Overtime();
+        overtime.setAmount(Duration.ofHours(2).plusMinutes(35));
+        overtime.setOvertimeDate(LocalDate.of(2019,5,15));
 
-        mvc.perform(post("/employee/shortage/" + id)
+        mvc.perform(post("/employee/overtime/" + id)
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(shortage)))
+                .content(asJsonString(overtime)))
                 .andExpect(status().isOk());
-    }
 
-    @Test
-    public void isAbleToGetShortageOfEmployee() throws Exception {
-
-        MvcResult result = mvc.perform(post("/employee")
-                .header("Authorization", token)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(employee)))
-                .andExpect(status().isOk()).andReturn();
-        long id = Long.parseLong(result.getResponse().getContentAsString());
-
-        Shortage shortage = new Shortage();
-        shortage.setAmount(Duration.ofHours(2).plusMinutes(35));
-        shortage.setShortageDate(LocalDate.of(2019,5,15));
-
-        mvc.perform(post("/employee/shortage/" + id)
-                .header("Authorization", token)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(shortage)))
-                .andExpect(status().isOk());
 
         mvc.perform(get("/employee")
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].statistic.shortage.[0].amount",
+                .andExpect(jsonPath("$.[0].statistic.balance",
                         Matchers.is(Duration.ofHours(2).plusMinutes(35).toString())));
+
+
     }
 }

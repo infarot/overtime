@@ -9,7 +9,7 @@ import javax.validation.constraints.Pattern;
 import java.util.Objects;
 
 @Entity
-public class Employee {
+public class Employee implements Cloneable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -91,5 +91,14 @@ public class Employee {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, lastName);
+    }
+
+    public Employee clone() {
+        try {
+            return (Employee) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

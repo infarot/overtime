@@ -8,15 +8,13 @@ import com.dawid.overtime.employee.exception.UnathorizedDeleteAttemptException;
 import com.dawid.overtime.employee.repository.EmployeeRepository;
 import com.dawid.overtime.employee.wrapper.ApplicationUserWrapper;
 import com.dawid.overtime.entity.Overtime;
-import com.dawid.overtime.entity.Shortage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.Duration;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -44,6 +42,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setLastName(lastName);
         employee.setApplicationUser(applicationUserWrapper.findByUsername(applicationUserUsername)
                 .orElseThrow(() -> new UsernameNotFoundException(applicationUserUsername)));
+        CustomHourStatistic statistic = employee.initializeStats();
+        statistic.setEmployee(employee);
+        employee.setStatistic(statistic);
         return employeeRepository.save(employee).getId();
     }
 
@@ -56,7 +57,33 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     private List<Employee> calculateEmployeeHourBalance(List<Employee> employees) {
-        return employees;
+        List<Employee> employeesWithBalance = new ArrayList<>();
+        for (Employee e : employees) {
+            employeesWithBalance.add(calculateEmployeeHourBalance(e));
+        }
+        System.out.println(employeesWithBalance);
+        return employeesWithBalance;
+    }
+
+    private Employee calculateEmployeeHourBalance(Employee employee) {
+        CustomHourStatistic customHourStatistic = employee.initializeStats();
+        Set<Overtime> overtimeSet = customHourStatistic.getOvertime();
+        if (overtimeSet != null) {
+            List<Duration> durationList = customHourStatistic.getOvertime()
+                    .stream()
+                    .map(Overtime::getAmount)
+                    .collect(Collectors.toList());
+
+            Duration duration = Duration.ZERO;
+            for (Duration d : durationList) {
+                duration = duration.plus(d);
+            }
+            customHourStatistic.setBalance(duration);
+            Employee employeeWithBalance = employee.clone();
+            employeeWithBalance.setStatistic(customHourStatistic);
+            return employeeWithBalance;
+        }
+        return employee;
     }
 
     @Override
@@ -83,26 +110,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         overtimeSet.add(overtime);
 
         statistic.setOvertime(overtimeSet);
-
-        employee.setStatistic(statistic);
-
-        employeeRepository.save(employee);
-    }
-
-    @Override
-    public void addShortage(Long id, Shortage shortage) {
-        Employee employee = findById(id);
-        checkIfIsAuthorizedToAccessEmployee(employee);
-
-        CustomHourStatistic statistic = employee.initializeStats();
-        Set<Shortage> shortageSet = statistic.initializeShortage();
-
-        statistic.setEmployee(employee);
-
-        shortage.setCustomHourStatistic(statistic);
-        shortageSet.add(shortage);
-
-        statistic.setShortage(shortageSet);
 
         employee.setStatistic(statistic);
 

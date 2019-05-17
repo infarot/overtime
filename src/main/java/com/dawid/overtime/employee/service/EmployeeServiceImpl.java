@@ -61,7 +61,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         for (Employee e : employees) {
             employeesWithBalance.add(calculateEmployeeHourBalance(e));
         }
-        System.out.println(employeesWithBalance);
         return employeesWithBalance;
     }
 
@@ -71,6 +70,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (overtimeSet != null) {
             List<Duration> durationList = customHourStatistic.getOvertime()
                     .stream()
+                    .filter((a -> a.getPickUpDate() == null))
                     .map(Overtime::getAmount)
                     .collect(Collectors.toList());
 

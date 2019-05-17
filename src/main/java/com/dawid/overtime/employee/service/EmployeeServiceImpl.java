@@ -8,6 +8,7 @@ import com.dawid.overtime.employee.exception.UnathorizedDeleteAttemptException;
 import com.dawid.overtime.employee.repository.EmployeeRepository;
 import com.dawid.overtime.employee.wrapper.ApplicationUserWrapper;
 import com.dawid.overtime.entity.Overtime;
+import com.dawid.overtime.entity.Shortage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -82,6 +83,26 @@ public class EmployeeServiceImpl implements EmployeeService {
         overtimeSet.add(overtime);
 
         statistic.setOvertime(overtimeSet);
+
+        employee.setStatistic(statistic);
+
+        employeeRepository.save(employee);
+    }
+
+    @Override
+    public void addShortage(Long id, Shortage shortage) {
+        Employee employee = findById(id);
+        checkIfIsAuthorizedToAccessEmployee(employee);
+
+        CustomHourStatistic statistic = employee.initializeStats();
+        Set<Shortage> shortageSet = statistic.initializeShortage();
+
+        statistic.setEmployee(employee);
+
+        shortage.setCustomHourStatistic(statistic);
+        shortageSet.add(shortage);
+
+        statistic.setShortage(shortageSet);
 
         employee.setStatistic(statistic);
 

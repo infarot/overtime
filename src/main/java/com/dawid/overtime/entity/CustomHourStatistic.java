@@ -65,4 +65,12 @@ public class CustomHourStatistic {
         }
         return getOvertime();
     }
+
+    public Set<Shortage> initializeShortage() {
+        Set<Shortage> shortageSet = this.getShortage();
+        if (shortageSet == null) {
+            this.shortage = new HashSet<>();
+        }
+        return getShortage();
+    }
 }

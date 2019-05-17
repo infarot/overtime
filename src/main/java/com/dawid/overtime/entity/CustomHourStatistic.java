@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.Duration;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -56,5 +56,13 @@ public class CustomHourStatistic {
 
     public void setShortage(Set<Shortage> shortage) {
         this.shortage = shortage;
+    }
+
+    public Set<Overtime> initializeOvertime() {
+        Set<Overtime> overtimeSet = this.getOvertime();
+        if (overtimeSet == null) {
+            this.overtime = new HashSet<>();
+        }
+        return getOvertime();
     }
 }

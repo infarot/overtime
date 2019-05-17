@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -59,11 +60,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void delete(String id) {
-
         Long parsedId = Long.parseLong(id);
-        Optional<Employee> optionalEmployee = employeeRepository.findById(parsedId);
-        Employee employee = optionalEmployee.orElseThrow(() -> new EmployeeIdNotFoundException
-                ("Employee with id " + id + " was not found"));
+        Employee employee = findById(parsedId);
 
         checkIfIsAuthorizedToAccessEmployee(employee);
 
@@ -75,23 +73,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = findById(id);
         checkIfIsAuthorizedToAccessEmployee(employee);
 
-        CustomHourStatistic hourStatistic = employee.getStatistic();
-        if (hourStatistic == null) {
-            hourStatistic = new CustomHourStatistic();
-        }
-        Set<Overtime> overtimeSet = hourStatistic.getOvertime();
-        if (overtimeSet == null) {
-            overtimeSet = new HashSet<>();
-        }
+        CustomHourStatistic statistic = employee.initializeStats();
+        Set<Overtime> overtimeSet = statistic.initializeOvertime();
 
-        hourStatistic.setEmployee(employee);
+        statistic.setEmployee(employee);
 
-        overtime.setCustomHourStatistic(hourStatistic);
+        overtime.setCustomHourStatistic(statistic);
         overtimeSet.add(overtime);
 
-        hourStatistic.setOvertime(overtimeSet);
+        statistic.setOvertime(overtimeSet);
 
-        employee.setStatistic(hourStatistic);
+        employee.setStatistic(statistic);
 
         employeeRepository.save(employee);
     }

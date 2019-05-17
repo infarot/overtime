@@ -30,7 +30,7 @@ public class Shortage {
     }
 
     public void setShortageDate(LocalDate shortageDate) {
-        this.shortageDate = shortageDate.plusDays(1);
+        this.shortageDate = shortageDate;
     }
 
     public LocalDate getCatchUpDate() {
@@ -38,7 +38,7 @@ public class Shortage {
     }
 
     public void setCatchUpDate(LocalDate catchUpDate) {
-        this.catchUpDate = catchUpDate.plusDays(1);
+        this.catchUpDate = catchUpDate;
     }
 
     public String getRemarks() {

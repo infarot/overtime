@@ -31,7 +31,7 @@ public class Overtime {
     }
 
     public void setOvertimeDate(LocalDate overtimeDate) {
-        this.overtimeDate = overtimeDate.plusDays(1);
+        this.overtimeDate = overtimeDate;
     }
 
     public LocalDate getPickUpDate() {
@@ -39,7 +39,7 @@ public class Overtime {
     }
 
     public void setPickUpDate(LocalDate pickUpDate) {
-        this.pickUpDate = pickUpDate.plusDays(1);
+        this.pickUpDate = pickUpDate;
     }
 
     public String getRemarks() {

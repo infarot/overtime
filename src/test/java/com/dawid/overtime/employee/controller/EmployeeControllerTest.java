@@ -147,18 +147,21 @@ public class EmployeeControllerTest {
                 .andExpect(status().isOk()).andReturn();
         long id = Long.parseLong(result.getResponse().getContentAsString());
 
+        Overtime overtime = new Overtime();
+        overtime.setAmount(Duration.ofHours(2).plusMinutes(35));
+        overtime.setOvertimeDate(LocalDate.of(2019,5,15));
 
-        mvc.perform(post("/employee/" + id + "/2/35")
+        mvc.perform(post("/employee/" + id)
                 .header("Authorization", token)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(overtime)))
                 .andExpect(status().isOk());
 
         mvc.perform(get("/employee")
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].stats.overtime", Matchers.is(Duration.ofHours(2).plusMinutes(35).toString())));
+                .andExpect(jsonPath("$.[0].statistic.overtime.[0].amount",
+                        Matchers.is(Duration.ofHours(2).plusMinutes(35).toString())));
     }
-
-
 }

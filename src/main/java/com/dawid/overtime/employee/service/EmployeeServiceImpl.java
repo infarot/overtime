@@ -51,7 +51,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<Employee> findAllEmployeesByApplicationUserUsername() {
         String applicationUserUsername = authorizationHolder.loadCurrentUserUsername();
-        List<Employee> employees = employeeRepository.findAllByApplicationUser(applicationUserWrapper.findByUsername(applicationUserUsername)
+        List<Employee> employees = employeeRepository
+                .findAllByApplicationUser(applicationUserWrapper.findByUsername(applicationUserUsername)
                 .orElseThrow(() -> new UsernameNotFoundException(applicationUserUsername)));
         return calculateEmployeeHourBalance(employees);
     }
@@ -107,6 +108,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         statistic.setEmployee(employee);
 
         overtime.setCustomHourStatistic(statistic);
+        overtimeSet.remove(overtime);
         overtimeSet.add(overtime);
 
         statistic.setOvertime(overtimeSet);

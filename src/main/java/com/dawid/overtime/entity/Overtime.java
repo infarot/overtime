@@ -2,6 +2,7 @@ package com.dawid.overtime.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+
 import javax.persistence.*;
 import java.time.Duration;
 import java.time.LocalDate;

@@ -36,4 +36,10 @@ public class EmployeeController {
     public void addOvertimeToEmployee(@PathVariable String employeeId, @RequestBody Overtime overtime) {
         employeeService.addOvertime(Long.parseLong(employeeId), overtime);
     }
+
+    @DeleteMapping("employee/overtime/{employeeId}/{overtimeId}")
+    public void deleteOvertimeFromEmployee(@PathVariable String employeeId, @PathVariable String overtimeId) {
+        employeeService.deleteOvertime(Long.parseLong(employeeId), Long.parseLong(overtimeId));
+    }
+
 }

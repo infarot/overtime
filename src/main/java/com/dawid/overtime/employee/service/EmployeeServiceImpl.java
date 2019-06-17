@@ -1,5 +1,7 @@
 package com.dawid.overtime.employee.service;
 
+import com.dawid.overtime.employee.exception.OvertimeIdNotFoundException;
+import com.dawid.overtime.employee.repository.OvertimeRepository;
 import com.dawid.overtime.employee.wrapper.AuthorizationHolder;
 import com.dawid.overtime.entity.CustomHourStatistic;
 import com.dawid.overtime.entity.Employee;
@@ -22,15 +24,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
     private ApplicationUserWrapper applicationUserWrapper;
     private AuthorizationHolder authorizationHolder;
+    private OvertimeRepository overtimeRepository;
 
 
     @Autowired
     public EmployeeServiceImpl(EmployeeRepository employeeRepository,
                                ApplicationUserWrapper applicationUserWrapper,
-                               AuthorizationHolder authorizationHolder) {
+                               AuthorizationHolder authorizationHolder,
+                               OvertimeRepository overtimeRepository) {
         this.employeeRepository = employeeRepository;
         this.applicationUserWrapper = applicationUserWrapper;
         this.authorizationHolder = authorizationHolder;
+        this.overtimeRepository = overtimeRepository;
     }
 
 
@@ -53,7 +58,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         String applicationUserUsername = authorizationHolder.loadCurrentUserUsername();
         List<Employee> employees = employeeRepository
                 .findAllByApplicationUser(applicationUserWrapper.findByUsername(applicationUserUsername)
-                .orElseThrow(() -> new UsernameNotFoundException(applicationUserUsername)));
+                        .orElseThrow(() -> new UsernameNotFoundException(applicationUserUsername)));
         return calculateEmployeeHourBalance(employees);
     }
 
@@ -116,6 +121,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setStatistic(statistic);
 
         employeeRepository.save(employee);
+    }
+
+    @Override
+    public void deleteOvertime(Long employeeId, Long overtimeId) {
+        Employee employee = findById(employeeId);
+        checkIfIsAuthorizedToAccessEmployee(employee);
+        overtimeRepository.delete(overtimeRepository.findById(overtimeId)
+                .orElseThrow(OvertimeIdNotFoundException::new));
+
     }
 
     private Employee findById(Long id) {

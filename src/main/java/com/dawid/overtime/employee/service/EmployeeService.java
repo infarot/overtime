@@ -9,7 +9,12 @@ import java.util.List;
 public interface EmployeeService {
 
     Long addNewEmployee(String name, String lastName);
+
     List<Employee> findAllEmployeesByApplicationUserUsername();
+
     void delete(String id);
+
     void addOvertime(Long employeeId, Overtime overtime);
+
+    void deleteOvertime(Long employeeId, Long overtimeId);
 }

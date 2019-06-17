@@ -128,7 +128,7 @@ public class EmployeeControllerTest {
 
         Overtime overtime = new Overtime();
         overtime.setAmount(Duration.ofHours(2).plusMinutes(35));
-        overtime.setOvertimeDate(LocalDate.of(2019,5,15));
+        overtime.setOvertimeDate(LocalDate.of(2019, 5, 15));
 
         mvc.perform(post("/employee/overtime/" + id)
                 .header("Authorization", token)
@@ -149,7 +149,7 @@ public class EmployeeControllerTest {
 
         Overtime overtime = new Overtime();
         overtime.setAmount(Duration.ofHours(2).plusMinutes(35));
-        overtime.setOvertimeDate(LocalDate.of(2019,5,15));
+        overtime.setOvertimeDate(LocalDate.of(2019, 5, 15));
 
         mvc.perform(post("/employee/overtime/" + id)
                 .header("Authorization", token)
@@ -177,8 +177,9 @@ public class EmployeeControllerTest {
         long id = Long.parseLong(result.getResponse().getContentAsString());
 
         Overtime overtime = new Overtime();
+        overtime.setId(1L);
         overtime.setAmount(Duration.ofHours(2).plusMinutes(35));
-        overtime.setOvertimeDate(LocalDate.of(2019,5,15));
+        overtime.setOvertimeDate(LocalDate.of(2019, 5, 15));
 
         mvc.perform(post("/employee/overtime/" + id)
                 .header("Authorization", token)
@@ -193,7 +194,39 @@ public class EmployeeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].statistic.balance",
                         Matchers.is(Duration.ofHours(2).plusMinutes(35).toString())));
+    }
+
+    @Test
+    public void isAbleToDeleteOvertimeFromOwnedEmployee() throws Exception {
+        MvcResult result = mvc.perform(post("/employee")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(employee)))
+                .andExpect(status().isOk()).andReturn();
+        long employeeId = Long.parseLong(result.getResponse().getContentAsString());
+
+        Overtime overtime = new Overtime();
+        overtime.setId(1L);
+        overtime.setAmount(Duration.ofHours(2).plusMinutes(35));
+        overtime.setOvertimeDate(LocalDate.of(2019, 5, 15));
+
+        mvc.perform(post("/employee/overtime/" + employeeId)
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(overtime)))
+                .andExpect(status().isOk());
 
 
+        MvcResult result1 = mvc.perform(get("/employee")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        long overtimeId = Long.parseLong(String.valueOf(result1.getResponse().getContentAsString().charAt(99)));
+
+        mvc.perform(delete("/employee/overtime/" + employeeId + "/" + overtimeId)
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 }

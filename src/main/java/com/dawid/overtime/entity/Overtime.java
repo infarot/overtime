@@ -11,13 +11,23 @@ import java.util.Objects;
 @Entity
 public class Overtime {
 
-    private Duration amount;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private Duration amount;
     private LocalDate overtimeDate;
     private LocalDate pickUpDate;
     private String remarks;
     @ManyToOne
     private CustomHourStatistic customHourStatistic;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Duration getAmount() {
         return amount;

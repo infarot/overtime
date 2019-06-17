@@ -5,6 +5,7 @@ public class MyAssertion {
         try {
             action.run();
         } catch (Exception ex) {
+            ex.printStackTrace();
             throw new Error("expected action not to throw, but it did!", ex);
         }
     }
@@ -14,7 +15,7 @@ public class MyAssertion {
             action.run();
             throw new Error("expected action to throw, but id didn't!");
         } catch (Exception ex) {
-
+            ex.printStackTrace();
         }
     }
 }

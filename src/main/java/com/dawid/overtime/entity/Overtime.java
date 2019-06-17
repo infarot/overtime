@@ -75,14 +75,11 @@ public class Overtime {
         if (this == o) return true;
         if (!(o instanceof Overtime)) return false;
         Overtime overtime = (Overtime) o;
-        return Objects.equals(id, overtime.id) &&
-                Objects.equals(amount, overtime.amount) &&
-                Objects.equals(overtimeDate, overtime.overtimeDate) &&
-                Objects.equals(remarks, overtime.remarks);
+        return Objects.equals(id, overtime.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, amount, overtimeDate, remarks);
+        return Objects.hash(id);
     }
 }

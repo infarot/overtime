@@ -1,6 +1,7 @@
 package com.dawid.overtime.employee.handler;
 
 import com.dawid.overtime.employee.exception.EmployeeIdNotFoundException;
+import com.dawid.overtime.employee.exception.OvertimeIdNotFoundException;
 import com.dawid.overtime.employee.exception.UnathorizedDeleteAttemptException;
 import com.dawid.overtime.response.OvertimeExceptionResponse;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,13 @@ public class EmployeeExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<OvertimeExceptionResponse> handleException(NumberFormatException e){
+    public ResponseEntity<OvertimeExceptionResponse> handleException(NumberFormatException e) {
+        OvertimeExceptionResponse response = new OvertimeExceptionResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage(), System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<OvertimeExceptionResponse> handleException(OvertimeIdNotFoundException e) {
         OvertimeExceptionResponse response = new OvertimeExceptionResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage(), System.currentTimeMillis());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }

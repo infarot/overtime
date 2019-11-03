@@ -23,9 +23,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private BCryptPasswordEncoder passwordEncoder;
     private UserDetailsService userService;
+    private static final String[] SWAGGER = {"/v2/api-docs",
+            "/configuration/ui",
+            "/swagger-resources/**",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/h2/*",
+            "/webjars/**"};
 
     @Autowired
-    public SecurityConfig(BCryptPasswordEncoder passwordEncoder, @Qualifier("userDetailsServiceImpl") UserDetailsService userService){
+    public SecurityConfig(BCryptPasswordEncoder passwordEncoder, @Qualifier("userDetailsServiceImpl") UserDetailsService userService) {
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
     }
@@ -34,11 +41,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/sign-up").permitAll()
+                .antMatchers(HttpMethod.GET, SWAGGER).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new AuthenticationFilter(authenticationManager()))
                 .addFilter(new AuthorizationFilter(authenticationManager()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.headers().frameOptions().disable();
     }
 
     @Override
@@ -52,7 +61,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
         return source;
     }
-
-
-
 }

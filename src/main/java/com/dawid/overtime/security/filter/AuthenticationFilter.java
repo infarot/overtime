@@ -2,12 +2,11 @@ package com.dawid.overtime.security.filter;
 
 
 import com.auth0.jwt.JWT;
-import com.dawid.overtime.entity.ApplicationUser;
+import com.dawid.overtime.entity.ApplicationUserEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -31,11 +30,10 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
         try {
-            ApplicationUser credentials = new ObjectMapper()
-                    .readValue(request.getInputStream(), ApplicationUser.class);
+            ApplicationUserEntity credentials = new ObjectMapper()
+                    .readValue(request.getInputStream(), ApplicationUserEntity.class);
 
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(

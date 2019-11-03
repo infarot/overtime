@@ -1,6 +1,6 @@
 package com.dawid.overtime.security.repository;
 
-import com.dawid.overtime.entity.ApplicationUser;
+import com.dawid.overtime.entity.ApplicationUserEntity;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class ApplicationUserRepositoryTest {
     @Test
     public void findByUserNameIsReturningCorrectUser(){
 
-        ApplicationUser testUser = new ApplicationUser();
+        ApplicationUserEntity testUser = new ApplicationUserEntity();
         testUser.setUsername("test");
         testUser.setPassword("test1234");
 
@@ -38,7 +38,7 @@ public class ApplicationUserRepositoryTest {
     @Test
     public void findByUserNameIsReturningNullForMissingUser(){
 
-        ApplicationUser testUser = new ApplicationUser();
+        ApplicationUserEntity testUser = new ApplicationUserEntity();
         testUser.setUsername("test");
         testUser.setPassword("test1234");
 

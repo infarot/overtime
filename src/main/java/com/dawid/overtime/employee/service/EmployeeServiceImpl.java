@@ -1,83 +1,95 @@
 package com.dawid.overtime.employee.service;
 
+import com.dawid.overtime.dto.EmployeeDto;
+import com.dawid.overtime.dto.OvertimeDto;
 import com.dawid.overtime.employee.exception.OvertimeIdNotFoundException;
 import com.dawid.overtime.employee.repository.OvertimeRepository;
 import com.dawid.overtime.employee.wrapper.AuthorizationHolder;
-import com.dawid.overtime.entity.CustomHourStatistic;
-import com.dawid.overtime.entity.Employee;
+import com.dawid.overtime.entity.CustomHourStatisticEntity;
 import com.dawid.overtime.employee.exception.EmployeeIdNotFoundException;
 import com.dawid.overtime.employee.exception.UnathorizedDeleteAttemptException;
 import com.dawid.overtime.employee.repository.EmployeeRepository;
 import com.dawid.overtime.employee.wrapper.ApplicationUserWrapper;
-import com.dawid.overtime.entity.Overtime;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.dawid.overtime.entity.EmployeeEntity;
+import com.dawid.overtime.entity.OvertimeEntity;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private EmployeeRepository employeeRepository;
-    private ApplicationUserWrapper applicationUserWrapper;
-    private AuthorizationHolder authorizationHolder;
-    private OvertimeRepository overtimeRepository;
-
-
-    @Autowired
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository,
-                               ApplicationUserWrapper applicationUserWrapper,
-                               AuthorizationHolder authorizationHolder,
-                               OvertimeRepository overtimeRepository) {
-        this.employeeRepository = employeeRepository;
-        this.applicationUserWrapper = applicationUserWrapper;
-        this.authorizationHolder = authorizationHolder;
-        this.overtimeRepository = overtimeRepository;
-    }
-
+    private final EmployeeRepository employeeRepository;
+    private final ApplicationUserWrapper applicationUserWrapper;
+    private final AuthorizationHolder authorizationHolder;
+    private final OvertimeRepository overtimeRepository;
+    private final EmployeeMapper employeeMapper;
+    private final OvertimeMapper overtimeMapper;
 
     @Override
     public Long addNewEmployee(String name, String lastName) {
         String applicationUserUsername = authorizationHolder.loadCurrentUserUsername();
-        Employee employee = new Employee();
+        EmployeeEntity employee = new EmployeeEntity();
         employee.setName(name);
         employee.setLastName(lastName);
         employee.setApplicationUser(applicationUserWrapper.findByUsername(applicationUserUsername)
                 .orElseThrow(() -> new UsernameNotFoundException(applicationUserUsername)));
-        CustomHourStatistic statistic = employee.initializeStats();
+        CustomHourStatisticEntity statistic = employee.initializeStats();
         statistic.setEmployee(employee);
         employee.setStatistic(statistic);
         return employeeRepository.save(employee).getId();
     }
 
     @Override
-    public List<Employee> findAllEmployeesByApplicationUserUsername() {
+    public List<EmployeeDto> findAllEmployeesByApplicationUserUsername() {
         String applicationUserUsername = authorizationHolder.loadCurrentUserUsername();
-        List<Employee> employees = employeeRepository
+        List<EmployeeEntity> employees = employeeRepository
                 .findAllByApplicationUser(applicationUserWrapper.findByUsername(applicationUserUsername)
                         .orElseThrow(() -> new UsernameNotFoundException(applicationUserUsername)));
-        return calculateEmployeeHourBalance(employees);
+        employees = calculateEmployeeHourBalance(employees);
+        final List<EmployeeDto> convertedEmployees = new ArrayList<>();
+        for (EmployeeEntity employeeEntity : employees) {
+            EmployeeDto employeeDto = employeeMapper.toDto(employeeEntity);
+            employeeDto.setBalance(String.valueOf(employeeEntity.getStatistic().getBalance()));
+            employeeDto.setOvertime(toOvertimeDtoSet(employeeEntity));
+            convertedEmployees.add(employeeDto);
+        }
+        return convertedEmployees;
     }
 
-    private List<Employee> calculateEmployeeHourBalance(List<Employee> employees) {
-        List<Employee> employeesWithBalance = new ArrayList<>();
-        for (Employee e : employees) {
+    private Set<OvertimeDto> toOvertimeDtoSet(EmployeeEntity employeeEntity) {
+        Set<OvertimeDto> overtimeDtoSet = new HashSet<>();
+        if (employeeEntity.getStatistic() != null && employeeEntity.getStatistic().getOvertime() != null) {
+            for (OvertimeEntity overtimeEntity : employeeEntity.getStatistic().getOvertime()) {
+                overtimeDtoSet.add(overtimeMapper.toDto(overtimeEntity));
+            }
+        }
+        return overtimeDtoSet;
+    }
+
+    private List<EmployeeEntity> calculateEmployeeHourBalance(List<EmployeeEntity> employees) {
+        List<EmployeeEntity> employeesWithBalance = new ArrayList<>();
+        for (EmployeeEntity e : employees) {
             employeesWithBalance.add(calculateEmployeeHourBalance(e));
         }
         return employeesWithBalance;
     }
 
-    private Employee calculateEmployeeHourBalance(Employee employee) {
-        CustomHourStatistic customHourStatistic = employee.initializeStats();
-        Set<Overtime> overtimeSet = customHourStatistic.getOvertime();
+    private EmployeeEntity calculateEmployeeHourBalance(EmployeeEntity employee) {
+        CustomHourStatisticEntity customHourStatistic = employee.initializeStats();
+        Set<OvertimeEntity> overtimeSet = customHourStatistic.getOvertime();
         if (overtimeSet != null) {
             List<Duration> durationList = customHourStatistic.getOvertime()
                     .stream()
                     .filter((a -> a.getPickUpDate() == null))
-                    .map(Overtime::getAmount)
+                    .map(OvertimeEntity::getAmount)
                     .collect(Collectors.toList());
 
             Duration duration = Duration.ZERO;
@@ -85,7 +97,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 duration = duration.plus(d);
             }
             customHourStatistic.setBalance(duration);
-            Employee employeeWithBalance = employee.clone();
+            EmployeeEntity employeeWithBalance = new EmployeeEntity(employee);
             employeeWithBalance.setStatistic(customHourStatistic);
             return employeeWithBalance;
         }
@@ -95,7 +107,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void delete(String id) {
         Long parsedId = Long.parseLong(id);
-        Employee employee = findById(parsedId);
+        EmployeeEntity employee = findById(parsedId);
 
         checkIfIsAuthorizedToAccessEmployee(employee);
 
@@ -103,18 +115,30 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void addOvertime(Long id, Overtime overtime) {
-        Employee employee = findById(id);
+    public void addOvertime(Long id, OvertimeDto overtime) {
+        OvertimeEntity entity = new OvertimeEntity();
+        if (!StringUtils.isEmpty(overtime.getAmount())) {
+            entity.setAmount(Duration.parse(overtime.getAmount()));
+        }
+        if (!StringUtils.isEmpty(overtime.getOvertimeDate())) {
+            entity.setOvertimeDate(LocalDate.parse(overtime.getOvertimeDate()));
+        }
+        if (!StringUtils.isEmpty(overtime.getPickUpDate())) {
+            entity.setPickUpDate(LocalDate.parse(overtime.getPickUpDate()));
+        }
+        entity.setRemarks(overtime.getRemarks());
+        entity.setId(overtime.getId());
+        EmployeeEntity employee = findById(id);
         checkIfIsAuthorizedToAccessEmployee(employee);
 
-        CustomHourStatistic statistic = employee.initializeStats();
-        Set<Overtime> overtimeSet = statistic.initializeOvertime();
+        CustomHourStatisticEntity statistic = employee.initializeStats();
+        Set<OvertimeEntity> overtimeSet = statistic.initializeOvertime();
 
         statistic.setEmployee(employee);
 
-        overtime.setCustomHourStatistic(statistic);
-        overtimeSet.remove(overtime);
-        overtimeSet.add(overtime);
+        entity.setCustomHourStatistic(statistic);
+        overtimeSet.remove(entity);
+        overtimeSet.add(entity);
 
         statistic.setOvertime(overtimeSet);
 
@@ -125,21 +149,21 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void deleteOvertime(Long employeeId, Long overtimeId) {
-        Employee employee = findById(employeeId);
+        EmployeeEntity employee = findById(employeeId);
         checkIfIsAuthorizedToAccessEmployee(employee);
         overtimeRepository.delete(overtimeRepository.findById(overtimeId)
                 .orElseThrow(OvertimeIdNotFoundException::new));
 
     }
 
-    private Employee findById(Long id) {
+    private EmployeeEntity findById(Long id) {
         return employeeRepository.findById(id).orElseThrow(() -> new EmployeeIdNotFoundException
                 ("Employee with id " + id + " was not found"));
     }
 
-    private void checkIfIsAuthorizedToAccessEmployee(Employee employee) {
+    private void checkIfIsAuthorizedToAccessEmployee(EmployeeEntity employee) {
         String applicationUserUsername = authorizationHolder.loadCurrentUserUsername();
-        if (!employee.getApplicationUserUsername().equals(applicationUserUsername)) {
+        if (!employee.getApplicationUser().getUsername().equals(applicationUserUsername)) {
             throw new UnathorizedDeleteAttemptException
                     ("Provided employee id doesn't belong to user with username " + applicationUserUsername);
         }

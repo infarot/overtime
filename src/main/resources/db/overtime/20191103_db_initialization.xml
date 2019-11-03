@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet author="Dawid (generated)" id="1572787804585-1">
+        <createTable tableName="APPLICATION_USER">
+            <column name="USERNAME" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EMAIL" type="VARCHAR(255)"/>
+            <column name="PASSWORD" type="VARCHAR(100)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Dawid (generated)" id="1572787804585-2">
+        <createTable tableName="CUSTOM_HOUR_STATISTIC">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="CUSTOM_HOUR_STATISTICPK"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Dawid (generated)" id="1572787804585-3">
+        <createTable tableName="EMPLOYEE">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="EMPLOYEEPK"/>
+            </column>
+            <column name="LAST_NAME" type="VARCHAR(50)"/>
+            <column name="NAME" type="VARCHAR(50)"/>
+            <column name="APPLICATION_USER_USERNAME" type="VARCHAR(20)"/>
+            <column name="CUSTOM_HOUR_STATISTIC_ID" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Dawid (generated)" id="1572787804585-4">
+        <createTable tableName="OVERTIME">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="OVERTIMEPK"/>
+            </column>
+            <column name="AMOUNT" type="VARCHAR(50)"/>
+            <column name="OVERTIME_DATE" type="DATE"/>
+            <column name="PICK_UP_DATE" type="DATE"/>
+            <column name="REMARKS" type="VARCHAR(255)"/>
+            <column name="CUSTOM_HOUR_STATISTIC_ID" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Dawid (generated)" id="1572787804585-5">
+        <addPrimaryKey columnNames="USERNAME" constraintName="APPLICATION_USERPK" tableName="APPLICATION_USER"/>
+    </changeSet>
+    <changeSet author="Dawid (generated)" id="1572787804585-6">
+        <addForeignKeyConstraint baseColumnNames="CUSTOM_HOUR_STATISTIC_ID" baseTableName="EMPLOYEE" constraintName="FK_7utusybh2g7ev644jge94piyk" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="CUSTOM_HOUR_STATISTIC"/>
+    </changeSet>
+    <changeSet author="Dawid (generated)" id="1572787804585-7">
+        <addForeignKeyConstraint baseColumnNames="CUSTOM_HOUR_STATISTIC_ID" baseTableName="OVERTIME" constraintName="FK_dyem2nlxuschxqkvio7wqhfac" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="CUSTOM_HOUR_STATISTIC"/>
+    </changeSet>
+    <changeSet author="Dawid (generated)" id="1572787804585-8">
+        <addForeignKeyConstraint baseColumnNames="APPLICATION_USER_USERNAME" baseTableName="EMPLOYEE" constraintName="FK_gkbt7odeh7gwkwiggq1orgsuu" deferrable="false" initiallyDeferred="false" referencedColumnNames="USERNAME" referencedTableName="APPLICATION_USER"/>
+    </changeSet>
+</databaseChangeLog>

@@ -2,11 +2,11 @@ package com.dawid.overtime.employee.service;
 
 import com.dawid.overtime.employee.repository.OvertimeRepository;
 import com.dawid.overtime.employee.wrapper.AuthorizationHolder;
-import com.dawid.overtime.entity.Employee;
 import com.dawid.overtime.employee.repository.EmployeeRepository;
 import com.dawid.overtime.employee.wrapper.ApplicationUserWrapper;
-import com.dawid.overtime.entity.ApplicationUser;
-import com.dawid.overtime.entity.Overtime;
+import com.dawid.overtime.entity.ApplicationUserEntity;
+import com.dawid.overtime.entity.EmployeeEntity;
+import com.dawid.overtime.entity.OvertimeEntity;
 import com.dawid.overtime.utility.MyAssertion;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,12 +32,18 @@ public class EmployeeServiceTest {
     @Mock
     private OvertimeRepository overtimeRepository;
 
+    @Mock
+    private EmployeeMapper employeeMapper;
+
+    @Mock
+    private OvertimeMapper overtimeMapper;
+
     private EmployeeService instance;
 
     @Before
     public void setup() {
         instance = new EmployeeServiceImpl
-                (employeeRepository, applicationUserWrapper, authorizationHolder, overtimeRepository);
+                (employeeRepository, applicationUserWrapper, authorizationHolder, overtimeRepository, employeeMapper, overtimeMapper);
     }
 
     @Test
@@ -52,11 +58,11 @@ public class EmployeeServiceTest {
 
     @Test
     public void isUnableToDeleteNotOwnEmployee() {
-        ApplicationUser applicationUser = new ApplicationUser();
+        ApplicationUserEntity applicationUser = new ApplicationUserEntity();
         applicationUser.setUsername("testUser");
         applicationUser.setPassword("test1234");
 
-        Employee employee = new Employee();
+        EmployeeEntity employee = new EmployeeEntity();
         employee.setName("testName");
         employee.setLastName("testLastName");
         employee.setId(1L);
@@ -69,11 +75,11 @@ public class EmployeeServiceTest {
 
     @Test
     public void isAbleToDeleteOwnEmployee() {
-        ApplicationUser applicationUser = new ApplicationUser();
+        ApplicationUserEntity applicationUser = new ApplicationUserEntity();
         applicationUser.setUsername("testUser");
         applicationUser.setPassword("test1234");
 
-        Employee employee = new Employee();
+        EmployeeEntity employee = new EmployeeEntity();
         employee.setName("testName");
         employee.setLastName("testLastName");
         employee.setId(1L);
@@ -88,17 +94,17 @@ public class EmployeeServiceTest {
     @Test
     public void isAbleToDeleteOwnEmployeeOvertime() {
 
-        ApplicationUser applicationUser = new ApplicationUser();
+        ApplicationUserEntity applicationUser = new ApplicationUserEntity();
         applicationUser.setUsername("testUser");
         applicationUser.setPassword("test1234");
 
-        Employee employee = new Employee();
+        EmployeeEntity employee = new EmployeeEntity();
         employee.setName("testName");
         employee.setLastName("testLastName");
         employee.setId(1L);
         employee.setApplicationUser(applicationUser);
 
-        Overtime overtime = new Overtime();
+        OvertimeEntity overtime = new OvertimeEntity();
         overtime.setId(1L);
 
         Mockito.when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));

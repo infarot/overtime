@@ -1,9 +1,9 @@
 package com.dawid.overtime.employee.controller;
 
-import com.dawid.overtime.entity.Employee;
-import com.dawid.overtime.entity.ApplicationUser;
+import com.dawid.overtime.entity.ApplicationUserEntity;
 
-import com.dawid.overtime.entity.Overtime;
+import com.dawid.overtime.entity.EmployeeEntity;
+import com.dawid.overtime.entity.OvertimeEntity;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,15 +39,16 @@ public class EmployeeControllerTest {
 
     private String token;
 
-    private Employee employee;
+    private EmployeeEntity employee;
 
     @Before
     public void setup() throws Exception {
-        ApplicationUser user = new ApplicationUser();
+        ApplicationUserEntity user = new ApplicationUserEntity();
         user.setUsername("test");
         user.setPassword("test1234");
+        user.setEmail("test@gmail.com");
 
-        employee = new Employee();
+        employee = new EmployeeEntity();
         employee.setName("test");
         employee.setLastName("test");
 
@@ -61,7 +62,7 @@ public class EmployeeControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn();
 
-        token = result.getResponse().getHeaderValue("Authorization").toString();
+        token = String.valueOf(result.getResponse().getHeaderValue("Authorization"));
     }
 
 
@@ -126,7 +127,7 @@ public class EmployeeControllerTest {
                 .andExpect(status().isOk()).andReturn();
         long id = Long.parseLong(result.getResponse().getContentAsString());
 
-        Overtime overtime = new Overtime();
+        OvertimeEntity overtime = new OvertimeEntity();
         overtime.setAmount(Duration.ofHours(2).plusMinutes(35));
         overtime.setOvertimeDate(LocalDate.of(2019, 5, 15));
 
@@ -147,7 +148,7 @@ public class EmployeeControllerTest {
                 .andExpect(status().isOk()).andReturn();
         long id = Long.parseLong(result.getResponse().getContentAsString());
 
-        Overtime overtime = new Overtime();
+        OvertimeEntity overtime = new OvertimeEntity();
         overtime.setAmount(Duration.ofHours(2).plusMinutes(35));
         overtime.setOvertimeDate(LocalDate.of(2019, 5, 15));
 
@@ -161,7 +162,7 @@ public class EmployeeControllerTest {
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].statistic.overtime.[0].amount",
+                .andExpect(jsonPath("$.[0].overtime.[0].amount",
                         Matchers.is(Duration.ofHours(2).plusMinutes(35).toString())));
     }
 
@@ -176,7 +177,7 @@ public class EmployeeControllerTest {
                 .andExpect(status().isOk()).andReturn();
         long id = Long.parseLong(result.getResponse().getContentAsString());
 
-        Overtime overtime = new Overtime();
+        OvertimeEntity overtime = new OvertimeEntity();
         overtime.setId(1L);
         overtime.setAmount(Duration.ofHours(2).plusMinutes(35));
         overtime.setOvertimeDate(LocalDate.of(2019, 5, 15));
@@ -192,7 +193,7 @@ public class EmployeeControllerTest {
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].statistic.balance",
+                .andExpect(jsonPath("$.[0].balance",
                         Matchers.is(Duration.ofHours(2).plusMinutes(35).toString())));
     }
 
@@ -205,7 +206,7 @@ public class EmployeeControllerTest {
                 .andExpect(status().isOk()).andReturn();
         long employeeId = Long.parseLong(result.getResponse().getContentAsString());
 
-        Overtime overtime = new Overtime();
+        OvertimeEntity overtime = new OvertimeEntity();
         overtime.setId(1L);
         overtime.setAmount(Duration.ofHours(2).plusMinutes(35));
         overtime.setOvertimeDate(LocalDate.of(2019, 5, 15));
@@ -222,7 +223,7 @@ public class EmployeeControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
-        long overtimeId = Long.parseLong(String.valueOf(result1.getResponse().getContentAsString().charAt(99)));
+        long overtimeId = Long.parseLong(String.valueOf(result1.getResponse().getContentAsString().charAt(79)));
 
         mvc.perform(delete("/employee/overtime/" + employeeId + "/" + overtimeId)
                 .header("Authorization", token)

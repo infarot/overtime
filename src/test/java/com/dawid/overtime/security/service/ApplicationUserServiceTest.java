@@ -1,6 +1,6 @@
 package com.dawid.overtime.security.service;
 
-import com.dawid.overtime.entity.ApplicationUser;
+import com.dawid.overtime.entity.ApplicationUserEntity;
 import com.dawid.overtime.security.repository.ApplicationUserRepository;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -27,7 +27,7 @@ public class ApplicationUserServiceTest {
 
     @Test
     public void isAbleToFindUserByUsername(){
-        ApplicationUser testApplicationUser = new ApplicationUser();
+        ApplicationUserEntity testApplicationUser = new ApplicationUserEntity();
         testApplicationUser.setUsername("test");
         testApplicationUser.setPassword("test");
 

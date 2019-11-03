@@ -24,7 +24,7 @@ HELP.md
 /nbdist/
 /.nb-gradle/
 /build/
-src/main/resources/application.properties
+src/main/resources/application.yaml
 
 
 ### VS Code ###

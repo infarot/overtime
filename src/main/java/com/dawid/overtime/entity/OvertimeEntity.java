@@ -37,6 +37,7 @@ public class OvertimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JoinColumn(name = "CUSTOM_HOUR_STATISTIC_ID")
     private CustomHourStatisticEntity customHourStatistic;
 }

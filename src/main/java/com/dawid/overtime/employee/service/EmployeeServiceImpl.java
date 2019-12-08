@@ -13,17 +13,20 @@ import com.dawid.overtime.employee.wrapper.ApplicationUserWrapper;
 import com.dawid.overtime.entity.EmployeeEntity;
 import com.dawid.overtime.entity.OvertimeEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
@@ -118,13 +121,28 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void addOvertime(Long id, OvertimeDto overtime) {
         OvertimeEntity entity = new OvertimeEntity();
         if (!StringUtils.isEmpty(overtime.getAmount())) {
-            entity.setAmount(Duration.parse(overtime.getAmount()));
+            try {
+                Duration amount = Duration.parse(overtime.getAmount());
+                entity.setAmount(amount);
+            } catch (DateTimeParseException e) {
+                log.warn("Invalid amount format passed");
+            }
         }
-        if (!StringUtils.isEmpty(overtime.getOvertimeDate())) {
-            entity.setOvertimeDate(LocalDate.parse(overtime.getOvertimeDate()));
+        if (!StringUtils.isEmpty(overtime.getOvertimeDate()) && !overtime.getOvertimeDate().equals("null")) {
+            try {
+                LocalDate date = LocalDate.parse(overtime.getOvertimeDate());
+                entity.setOvertimeDate(date);
+            } catch (DateTimeParseException e) {
+                log.warn("Invalid overtime date format passed");
+            }
         }
-        if (!StringUtils.isEmpty(overtime.getPickUpDate())) {
-            entity.setPickUpDate(LocalDate.parse(overtime.getPickUpDate()));
+        if (!StringUtils.isEmpty(overtime.getPickUpDate()) && !overtime.getPickUpDate().equals("null")) {
+            try {
+                LocalDate date = LocalDate.parse(overtime.getPickUpDate());
+                entity.setPickUpDate(date);
+            } catch (DateTimeParseException e) {
+                log.warn("Invalid pickup date format passed");
+            }
         }
         entity.setRemarks(overtime.getRemarks());
         entity.setId(overtime.getId());
